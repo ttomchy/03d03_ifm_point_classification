@@ -222,5 +222,5 @@ target_link_libraries(calculate_feature ${PCL_LIBRARIES})
 
 
 
-add_executable( random_forest  random_forest.cpp)
+add_executable( random_forest  src/random_forest.cpp)
 target_link_libraries( random_forest ${OpenCV_LIBS} )
