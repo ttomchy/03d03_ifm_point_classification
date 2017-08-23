@@ -14,7 +14,7 @@ using namespace std;
 int CountLines(char *filename)
 {
     ifstream ReadFile;
-    int n=0;
+    long long int n=0;
     string tmp;
     ReadFile.open(filename,ios::in);//ios::in 表示以只读的方式读取文件
     if(ReadFile.fail())//文件打开失败:返回0
@@ -35,24 +35,146 @@ int CountLines(char *filename)
 
 int main( int argc, char** argv )
 {
-    char filename[512]="/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat.txt";
-    int LINES=CountLines(filename);
+   // char filename[512]="/home/laptop2/work_space/intern_ws/o3d/test_ws/train_fea_40.txt";
+    char filename[512]=
+           // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
+           // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat.txt";
+            "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
+   // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_feature.txt";
+
+
+    long long int LINES=CountLines(filename);
     cerr<<"The number of lines is :"<<LINES<<endl;
     int row=LINES ,col=8;
 
     float training_data[row][col-1];
     float lables[row];
-    ifstream fin("/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat.txt"); //read the training dataset.
-    for(int i=0;i<row;i++){
-        for(int j=0;j<col;j++) {
-            if(j<col-1){
-                fin >> training_data[i][j];
-            }else{
-                fin >> lables[i];//The training lables
-            }
+
+    std::string file_open=
+   // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
+         // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_fea_40.txt";
+          // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat.txt";
+
+            "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
+
+         //   "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_feature.txt";
+
+
+/*
+    int j_num_fea =0;
+    std::string ss1;
+    long int num_total_lines=0;
+   // long long int LINES[5];
+    long long int start_lines=0;
+
+    int row=9 ,col=8;
+
+    float training_data[row][col-1];
+    float lables[row];
+
+
+
+    while(j_num_fea<1) {
+
+        char szName[100] = {'\0'};
+
+        sprintf(szName,
+               // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test_read/test%d.txt",
+              "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test_read/feature%d.txt",
+                j_num_fea);
+
+
+        LINES[j_num_fea]=CountLines(szName);
+        cerr<<"The number of lines is :"<<LINES[j_num_fea]<<endl;
+        cerr<<"The value of the szname is :"<<szName<<std::endl;
+
+//
+//
+//        ifstream fin(szName); //read the training dataset.
+//
+//
+//
+//        for(int i=start_lines;i< start_lines+ LINES[j_num_fea] ;i++){
+//            for(int j=0;j<col;j++) {
+//                if(j<col-1){
+//                    fin >> training_data[i][j];
+//                    cerr<<"the number of the training data is :"<< training_data[i][j]<<endl;
+//                }else{
+//                    fin >> lables[i];//The training lables
+//                }
+//            }
+//        }
+//        fin.close();
+
+        start_lines+=LINES[j_num_fea];
+        cerr<<"The number of the start_lines is :"<<start_lines<<endl;
+        j_num_fea++;
+
+    }
+
+
+*/
+/*
+    for(int i=0;i<9;i++){
+        for(int j=0;j<7;j++){
+
+          std::cout<<std::fixed<<training_data[i][j]<<" ";
+        }
+        std::cout<<std::endl;
+        std::cout<<lables[i]<<std::endl;
+    }
+
+*/
+
+
+
+
+    ifstream fin;
+
+    fin.open (file_open.c_str(), std::fstream::in);
+    if(!fin.is_open())
+        std::cerr<<"Fail to open the file !"<<std::endl;
+        //return ;
+    double s=0;
+    int count=0;
+    int row_l=0;
+    int col_l=0;
+    while(fin>>s){
+
+       // std::cout<<"The value of s is :"<<s<<std::endl;
+        if(count<7){
+
+            training_data[row_l][col_l++]=s;
+
+            count++;
+        } else {
+
+            lables[row_l]=s;
+          // std::cout<<"The value of  lables[row]is :"<< lables[row_l]<<std::endl;
+            row_l++;
+            count=0;
+            col_l=0;
         }
     }
-    fin.close();
+
+
+
+
+//   // ifstream fin(""); //read the training dataset.
+//    for(int i=0;i<row;i++){
+//        for(int j=0;j<col;j++) {
+//            if(j<col-1){
+//                fin >> training_data[i][j];
+//            }else{
+//                fin >> lables[i];//The training lables
+//            }
+//        }
+//    }
+//    fin.close();
+
+
+
+
 
     CvMat trainingDataCvMat = cvMat( row, col-1, CV_32FC1, training_data );
 
@@ -73,7 +195,7 @@ int main( int argc, char** argv )
 
 
 
-   //*******************************testing*******************************************
+    //*******************************testing*******************************************
 //    double sampleData[4]={0.197799, 0.797150, 0.005051 ,0.994949 };
 //    Mat sampleMat(4, 1, CV_32FC1, sampleData);
 //    float r = etrees.predict(sampleMat);
@@ -83,7 +205,11 @@ int main( int argc, char** argv )
     //   CvMat testingdataset = cvMat( row, col-1, CV_32FC1, training_data );
 
 
-    char filename_test[512]="/home/laptop2/work_space/intern_ws/o3d/test_ws/test_200_309.txt";
+    char filename_test[512]=//"/home/laptop2/work_space/intern_ws/o3d/test_ws/test_200_309.txt";
+
+    //"/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_box.txt";
+    "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_chair_subset.txt";
+
     int LINES_test=CountLines(filename_test);
 
     cerr<<"The number of testing data lines is :"<<LINES_test<<endl;
@@ -93,7 +219,14 @@ int main( int argc, char** argv )
 
     float testing_data[row][col-1];
     float testing_lables[row];
-    ifstream fin_test("/home/laptop2/work_space/intern_ws/o3d/test_ws/test_200_309.txt");  //read_the test dataset
+    ifstream fin_test(
+            //"/home/laptop2/work_space/intern_ws/o3d/test_ws/test_200_309.txt"
+          //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_box.txt"
+
+            "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_chair_subset.txt"
+
+
+    );  //read_the test dataset
     for(int i=0;i<row;i++){
         for(int j=0;j<col;j++) {
             if(j<col-1){
@@ -103,7 +236,7 @@ int main( int argc, char** argv )
             }
         }
     }
-    fin.close();
+    fin_test.close();
 
 
     Mat testing_dataCvMat= Mat( row, col-1, CV_32FC1, testing_data );
@@ -117,7 +250,7 @@ int main( int argc, char** argv )
 
     //calculate the errors.
     double test_hr = 0;
-
+    double recall=0;
     for (int i=0; i<LINES_test; i++)
     {
         double r;
@@ -125,16 +258,21 @@ int main( int argc, char** argv )
         //  std::cout<<"The value  of the testing_dataCvMat("<<i<<") is:"<<sample<<std::endl;
 
         r = etrees.predict(sample);
+        if(r==1200){
+            recall++;
+        }
         std::cout<<"The value of r is :"<<i<<" "<<r<<" "<<testing_lablesCvMat.at<float>(i,0) <<std::endl;
         r = fabs((double)r - testing_lablesCvMat.at<float>(i,0)) <= FLT_EPSILON ? 1 : 0;
         test_hr += r;
     }
 
-
+    recall/=LINES_test;
     test_hr /=LINES_test;
-    cerr<<"The accuracy rate is :"<<test_hr<<endl;
 
+    cerr<<"The accuracy rate is :"<<test_hr<<endl;
+    cerr<<"The number of the recall is :"<<recall<<endl;
     //get the  the variable importance vector...
+
 
 
 

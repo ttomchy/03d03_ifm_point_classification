@@ -5,10 +5,10 @@ project(beginner_tutorials)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  std_msgs
-)
+        roscpp
+        rospy
+        std_msgs
+        )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -100,10 +100,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES beginner_tutorials
-#  CATKIN_DEPENDS roscpp rospy std_msgs
-#  DEPENDS system_lib
+        #  INCLUDE_DIRS include
+        #  LIBRARIES beginner_tutorials
+        #  CATKIN_DEPENDS roscpp rospy std_msgs
+        #  DEPENDS system_lib
 )
 
 ###########
@@ -114,7 +114,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
-  ${catkin_INCLUDE_DIRS}
+        ${catkin_INCLUDE_DIRS}
 )
 
 find_package(PCL 1.2 REQUIRED)
@@ -194,18 +194,20 @@ add_definitions(${PCL_DEFINITIONS})
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 add_definitions(-std=c++11)
-
-add_executable(example src/example.cpp)
-target_link_libraries(example ${catkin_LIBRARIES})
-target_link_libraries(example ${PCL_LIBRARIES})
-
-
+#
+#add_executable(example src/example.cpp)
+#target_link_libraries(example ${catkin_LIBRARIES})
+#target_link_libraries(example ${PCL_LIBRARIES})
 
 
 
-add_executable( remove_ground src/remove_ground.cpp)
-target_link_libraries(remove_ground  ${catkin_LIBRARIES})
-target_link_libraries(remove_ground  ${PCL_LIBRARIES})
+
+
+
+add_executable( split_stairs src/split_stairs.cpp)
+target_link_libraries(split_stairs  ${catkin_LIBRARIES})
+target_link_libraries(split_stairs  ${PCL_LIBRARIES})
+
 
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
@@ -220,7 +222,14 @@ add_executable(calculate_feature src/calculate_feature.cpp)
 target_link_libraries(calculate_feature ${PCL_LIBRARIES})
 
 
-
-
 add_executable( random_forest  src/random_forest.cpp)
 target_link_libraries( random_forest ${OpenCV_LIBS} )
+
+
+#
+#add_executable( remove_ground src/remove_ground.cpp)
+#target_link_libraries(remove_ground  ${catkin_LIBRARIES})
+#target_link_libraries(remove_ground  ${PCL_LIBRARIES})
+#
+
+

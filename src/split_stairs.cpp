@@ -58,9 +58,9 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
 
 
     // Read in the cloud data
-  //  reader.read ("o3d03_origin0.pcd", *cloud);
-  //  std::vector<int> index;
-  //  pcl::removeNaNFromPointCloud(*cloud, *cloud, index);
+    //  reader.read ("o3d03_origin0.pcd", *cloud);
+    //  std::vector<int> index;
+    //  pcl::removeNaNFromPointCloud(*cloud, *cloud, index);
 
     pcl::fromROSMsg (*input, *cloud);   //关键的一句数据的转换
 
@@ -77,10 +77,10 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     sor.setStddevMulThresh(1.0);
     sor.filter(*cloud_filtered);
     std::cout<<"cloud after filtering:"<<std::endl;
-   // std::cerr<<*cloud_filtered<<std::endl;
+    // std::cerr<<*cloud_filtered<<std::endl;
 
     //  writer.write<pcl::PointXYZ>("split_map3d_inliers.pcd",*cloud_filtered,false);
-  //  std::cout<<"the size of the in-lier points is:"<<cloud_filtered->points.size ()<<std::endl;
+    //  std::cout<<"the size of the in-lier points is:"<<cloud_filtered->points.size ()<<std::endl;
 
     /*
     sor.setNegative(true);
@@ -106,18 +106,19 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     seg.setInputNormals (cloud_normals);
     // Obtain the plane inliers and coefficients
     seg.segment (*inliers_plane, *coefficients_plane);
-   // std::cerr << "Plane coefficients: " << *coefficients_plane << std::endl;
+    // std::cerr << "Plane coefficients: " << *coefficients_plane << std::endl;
+
 
     // Extract the planar inliers from the input cloud
     extract.setInputCloud (cloud_filtered);
     extract.setIndices (inliers_plane);
     extract.setNegative (false);
 
-    // Write the planar inliers to disk
-    // pcl::PointCloud<PointT>::Ptr cloud_plane (new pcl::PointCloud<PointT> ());
-    //  extract.filter (*cloud_plane);
-    // std::cerr << "PointCloud representing the planar component: " << cloud_plane->points.size () << " data points." << std::endl;
-    //  writer.write ("table_scene_mug_stereo_textured_plane.pcd", *cloud_plane, false);
+   //  Write the planar inliers to disk
+     pcl::PointCloud<PointT>::Ptr cloud_plane (new pcl::PointCloud<PointT> ());
+      extract.filter (*cloud_plane);
+     std::cerr << "PointCloud representing the planar component: " << cloud_plane->points.size () << " data points." << std::endl;
+      writer.write ("table_scene_mug_stereo_textured_plane.pcd", *cloud_plane, false);
 
 
     // Remove the planar inliers, extract the rest
@@ -128,8 +129,8 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
 
     pcl::PointCloud<PointT>::Ptr non_cloud_plane (new pcl::PointCloud<PointT> ());
     extract.filter (*non_cloud_plane);
-  //  std::cerr << "PointCloud representing the non_cloud_plane planar component: " << non_cloud_plane->points.size () << " data points." << std::endl;
-   // writer.write ("no-table_scene_mug_stereo_textured_plane.pcd", *cloud_filtered2, false);
+    //  std::cerr << "PointCloud representing the non_cloud_plane planar component: " << non_cloud_plane->points.size () << " data points." << std::endl;
+    // writer.write ("no-table_scene_mug_stereo_textured_plane.pcd", *cloud_filtered2, false);
 
 
     *cloud=*non_cloud_plane;
@@ -160,7 +161,9 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
         std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
         std::string ss1,ss2;
 
-        if(( cloud_cluster->points.size ()>420 )&& ( cloud_cluster->points.size ()<480 ) ){
+        if( cloud_cluster->points.size ()>2000 ){
+
+
 
 //
 //            double x_axis=0;
@@ -174,23 +177,24 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
 //
 //            if((x_axis<3)){
 
-                ROS_WARN("Successful writing wall points!");
-                ss1="./dataset/training/column/column/";
-                ss2="column";
-                // /home/laptop2/work_space/intern_ws/o3d/test_ws
-                std::stringstream ss;
-                ss <<ss1<<ss2  ;
-                ss<<j_num_wall<< ".pcd";
+            ROS_WARN("Successful writing wall points!");
+            ss1="./dataset/training/stair/test/";
+            ss2="chair";
+            // /home/laptop2/work_space/intern_ws/o3d/test_ws
+            std::stringstream ss;
+            ss <<ss1<<ss2  ;
+            ss<<j_num_wall<< ".pcd";
 
-                writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
-                j_num_wall++;
-           // }
+            writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
+            j_num_wall++;
+            // }
+
 
 
         } else{
-          //  ROS_ERROR("Successful writing non_wall points!");
-            ss1="./dataset/training/column/test/";
-            ss2="garbage";
+            //  ROS_ERROR("Successful writing non_wall points!");
+            ss1="./dataset/training/stair/test/";
+            ss2="flower";
             // /home/laptop2/work_space/intern_ws/o3d/test_ws
             std::stringstream ss;
             ss <<ss1<<ss2  ;
@@ -206,13 +210,13 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
 //            x_axis/=cloud_cluster->points.size();
 
             //if((x_axis<4)&&(cloud_cluster->points.size()>490)){
-                ROS_ERROR("Successful writing non_wall points!");
+            //    ROS_ERROR("Successful writing non_wall points!");
 
-             writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
-                j_num_not_wall++;
+            writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
+            j_num_not_wall++;
 
 
-        //    }
+            //    }
 
 
 
@@ -237,7 +241,7 @@ main (int argc, char** argv)
     ros::Subscriber sub = nh.subscribe ("/o3d3xx/camera/cloud", 1, cloud_cb);
 
     //创建ROS的发布节点
-  //  pub = nh.advertise<sensor_msgs::PointCloud2> ("/chy/point", 1);
+    //  pub = nh.advertise<sensor_msgs::PointCloud2> ("/chy/point", 1);
 
     // 回调
     ros::spin ();

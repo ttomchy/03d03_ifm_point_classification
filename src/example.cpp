@@ -20,7 +20,6 @@ void
 cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
 
-
     pcl::PointCloud<pcl::PointXYZ> cloud;
     pcl::PointCloud<pcl::PointXYZ> cloud_filtered;
 
@@ -53,33 +52,6 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     i++;
 
 
-
-
-
-
-//
-//    // 声明存储原始数据与滤波后的数据的点云的 格式
-//    pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;    //原始的点云的数据格式
-//    pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
-//    pcl::PCLPointCloud2 cloud_filtered;     //存储滤波后的数据格式
-//
-//    // 转化为PCL中的点云的数据格式
-//    pcl_conversions::toPCL(*input, *cloud);
-//
-//    // 进行一个滤波处理
-//    pcl::VoxelGrid<pcl::PCLPointCloud2> sor;   //实例化滤波
-//    sor.setInputCloud (cloudPtr);     //设置输入的滤波
-//    sor.setLeafSize (0.1, 0.1, 0.1);   //设置体素网格的大小
-//    sor.filter (cloud_filtered);      //存储滤波后的点云
-//
-//
-//
-//    // 再将滤波后的点云的数据格式转换为ROS 下的数据格式发布出去
-//    sensor_msgs::PointCloud2 output;   //声明的输出的点云的格式
-//    pcl_conversions::fromPCL(cloud_filtered, output);    //第一个参数是输入，后面的是输出
-//
-//    //发布命令
-//    pub.publish (output);
 
 }
 

@@ -146,18 +146,29 @@ int main (int argc, char** argv) {
     //Read the point cloud.
     pcl::PCDReader reader;
 
-    int j_num_wall =200;
+    int j_num_wall =0;
     std::string ss1;
 
-    while(j_num_wall<309) {
+    while(j_num_wall<106) {
 
         char szName[100] = {'\0'};
 //         sprintf(szName,
 //         "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/wall/clouser_wall%d.pcd",
-        // j_num_wall); //格式化输出文件名
+//         j_num_wall); //格式化输出文件名
+//        sprintf(szName,
+//                "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/not_wall/clouser_not_wall%d.pcd",
+//                j_num_wall); //格式化输出文件名
+//
+
         sprintf(szName,
-                "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/not_wall/clouser_not_wall%d.pcd",
+        "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/column/wall/wall%d.pcd",
                 j_num_wall); //格式化输出文件名
+
+//        sprintf(szName,
+//        "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/box/box/box%d.pcd",
+//
+//               j_num_wall); //格式化输出文件名
+
         reader.read(szName, *_cloud); // Remember to download the file first!
         //reader.read ("testdataset.pcd", *origin_cloud);
         std::cerr << "PointCloud before filtering: " << _cloud->width * _cloud->height
@@ -172,8 +183,16 @@ int main (int argc, char** argv) {
             origin_cloud->points[i].x=_cloud->points[i].x;
             origin_cloud->points[i].y=_cloud->points[i].y;
             origin_cloud->points[i].z=_cloud->points[i].z;
-            origin_cloud->points[i].intensity=1200;//1100 is the lable of the wall
-            //1200 is the lable of the target
+            origin_cloud->points[i].intensity=1100;
+            //1100 is the wall
+            //1200 is the target
+            //1300 is the chair
+            //1400 is the people
+            //1500 is the bottle
+            //1600 is the box
+            //1700 is the flower
+            //1800 is the garbage
+            //1900 is the column
         }
 
         //创建KdTreeFLANN对象，并把创建的点云设置为输入,创建一个searchPoint变量作为查询点
