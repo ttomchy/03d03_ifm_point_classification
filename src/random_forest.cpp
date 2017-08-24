@@ -7,6 +7,7 @@
 #include "opencv2/ml/ml.hpp"
 #include <fstream>
 
+#include "../include/data.h"
 using namespace cv;
 using namespace std;
 
@@ -28,46 +29,86 @@ int CountLines(char *filename)
             n++;
         }
         ReadFile.close();
+     //   sleep(5);
         return n;
     }
 }
 
+inline bool scan_lf(double &num)
+{
+    char in;double Dec=0.1;
+    bool IsN=false,IsD=false;
+    in=getchar();
+    if(in==EOF) return false;
+    while(in!='-'&&in!='.'&&(in<'0'||in>'9'))
+        in=getchar();
+    if(in=='-'){IsN=true;num=0;}
+    else if(in=='.'){IsD=true;num=0;}
+    else num=in-'0';
+    if(!IsD){
+        while(in=getchar(),in>='0'&&in<='9'){
+            num*=10;num+=in-'0';}
+    }
+    if(in!='.'){
+        if(IsN) num=-num;
+        return true;
+    }else{
+        while(in=getchar(),in>='0'&&in<='9'){
+            num+=Dec*(in-'0');Dec*=0.1;
+        }
+    }
+    if(IsN) num=-num;
+    return true;
+}
+
+
+
+data data_train;
 
 int main( int argc, char** argv )
 {
-   // char filename[512]="/home/laptop2/work_space/intern_ws/o3d/test_ws/train_fea_40.txt";
+
+
+   //
+    // char filename[512]="/home/laptop2/work_space/intern_ws/o3d/test_ws/train_fea_40.txt";
     char filename[512]=
-           // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
-           // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat.txt";
-            "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
-   // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_feature.txt";
+          //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat.txt";
+           //   "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat_backup.txt";
+         "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat_people.txt";
 
 
     long long int LINES=CountLines(filename);
     cerr<<"The number of lines is :"<<LINES<<endl;
-    int row=LINES ,col=8;
+    long long int row=LINES ,col=8;
 
-    float training_data[row][col-1];
-    float lables[row];
+   // float training_data[row][col-1];
+   // float lables[row];
 
-    std::string file_open=
-   // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
-         // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_fea_40.txt";
-          // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat.txt";
+  //
+    data_train.init_array(LINES);
 
-            "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
 
-         //   "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_feature.txt";
+
+
+
+//    std::string file_open=
+//   // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
+//         // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_fea_40.txt";
+//          // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat.txt";
+//
+//          //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt";
+//
+//            "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_feature.txt";
 
 
 /*
     int j_num_fea =0;
     std::string ss1;
     long int num_total_lines=0;
-   // long long int LINES[5];
+    long long int LINES[5];
     long long int start_lines=0;
-
-    int row=9 ,col=8;
+   // long long int row=CountLines(filename);
+    int row=600000, col=8;
 
     float training_data[row][col-1];
     float lables[row];
@@ -76,35 +117,60 @@ int main( int argc, char** argv )
 
     while(j_num_fea<1) {
 
-        char szName[100] = {'\0'};
+        char szName[100000];// = {'\0'};
 
-        sprintf(szName,
-               // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test_read/test%d.txt",
-              "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test_read/feature%d.txt",
-                j_num_fea);
+        try {
+            sprintf(szName,
+                    // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test_read/test%d.txt",
+                    "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test_read/feature%d.txt",
+                    j_num_fea);
+
+        }
+        catch (exception e) {
+            cerr <<"Error"<<endl;
+        }
+
+
 
 
         LINES[j_num_fea]=CountLines(szName);
         cerr<<"The number of lines is :"<<LINES[j_num_fea]<<endl;
         cerr<<"The value of the szname is :"<<szName<<std::endl;
 
-//
-//
-//        ifstream fin(szName); //read the training dataset.
-//
-//
-//
-//        for(int i=start_lines;i< start_lines+ LINES[j_num_fea] ;i++){
-//            for(int j=0;j<col;j++) {
-//                if(j<col-1){
-//                    fin >> training_data[i][j];
-//                    cerr<<"the number of the training data is :"<< training_data[i][j]<<endl;
-//                }else{
-//                    fin >> lables[i];//The training lables
-//                }
-//            }
-//        }
-//        fin.close();
+
+
+      //  ifstream fin(szName); //read the training dataset.
+
+        freopen(
+
+                //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt",
+               // "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_feature.txt",
+
+                szName,
+                "r",stdin);
+
+
+
+
+        for(int i=start_lines;i< start_lines+ LINES[j_num_fea] ;i++){
+            for(int j=0;j<col;j++) {
+                if(j<col-1){
+                  //  fin >> training_data[i][j];
+
+                scanf("%f",&training_data[i][j]);
+                cerr<<"the number of the training data is :"<< training_data[i][j]<<endl;
+
+
+                }else{
+                    scanf("%f", &lables[i]);//The training lables
+
+                    // fin >> lables[i];//The training lables
+
+                }
+            }
+        }
+     //   fin.close();
+
 
         start_lines+=LINES[j_num_fea];
         cerr<<"The number of the start_lines is :"<<start_lines<<endl;
@@ -112,8 +178,8 @@ int main( int argc, char** argv )
 
     }
 
-
 */
+
 /*
     for(int i=0;i<9;i++){
         for(int j=0;j<7;j++){
@@ -124,10 +190,10 @@ int main( int argc, char** argv )
         std::cout<<lables[i]<<std::endl;
     }
 
+
 */
 
-
-
+/*
 
     ifstream fin;
 
@@ -157,35 +223,77 @@ int main( int argc, char** argv )
         }
     }
 
+*/
+
+
+    ifstream fin(
+            //"/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat.txt"
+
+            "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_20_feat_backup.txt"
+
+    );
+
+    float tmp;
+    for(long long int i=0;i<row;i++){
+        for( int j=0;j<col;j++) {
+            if(j<col-1){
+
+                fin>>tmp;
+               // fin >> training_data[i][j];
+                data_train.add_train_data(i,j,tmp);
+               // cerr<<"     the value of the  add_train_data is :"<< tmp<<endl;
+            }else{
+
+                fin >>tmp;
+                //fin>>lables[i];//The training lables
+                data_train.add_lables(i,tmp);
+
+            }
+        }
+    }
+    fin.close();
 
 
 
-//   // ifstream fin(""); //read the training dataset.
-//    for(int i=0;i<row;i++){
-//        for(int j=0;j<col;j++) {
-//            if(j<col-1){
-//                fin >> training_data[i][j];
-//            }else{
-//                fin >> lables[i];//The training lables
-//            }
-//        }
-//    }
-//    fin.close();
+
+
+/*
+   freopen(
+
+         //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt",
+           "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_feature.txt",
+
+
+           "r",stdin);
+
+    for(int i=0;i<row;i++){
+        for(int j=0;j<col;j++) {
+            if(j<col-1){
+                scanf("%f",&training_data[i][j]);
+                cerr<<"The value of the training_data is:"<< training_data[i][j]<<endl;
+            }else{
+                scanf("%f", &lables[i]);//The training lables
+                cerr<<"The value of the lable is:"<< lables[i]<<endl;
+            }
+        }
+    }
+
+
+*/
 
 
 
 
 
-    CvMat trainingDataCvMat = cvMat( row, col-1, CV_32FC1, training_data );
+    CvMat trainingDataCvMat = cvMat( row, col-1, CV_32FC1, data_train.training_data );
 
-    CvMat responsesCvMat = cvMat( row, 1, CV_32FC1, lables );
+    CvMat responsesCvMat = cvMat( row, 1, CV_32FC1, data_train.lables );
 
     CvRTParams params= CvRTParams(10,500, 0, false,5, 0, true, 0, 100, 0, CV_TERMCRIT_ITER );
 
     CvERTrees etrees;
     etrees.train(&trainingDataCvMat, CV_ROW_SAMPLE, &responsesCvMat,
                  Mat(), Mat(), Mat(), Mat(),params);
-
 
 
     Mat impo= etrees.get_var_importance();
@@ -205,10 +313,10 @@ int main( int argc, char** argv )
     //   CvMat testingdataset = cvMat( row, col-1, CV_32FC1, training_data );
 
 
-    char filename_test[512]=//"/home/laptop2/work_space/intern_ws/o3d/test_ws/test_200_309.txt";
+    char filename_test[512]="/home/laptop2/work_space/intern_ws/o3d/test_ws/test_200_309.txt";
 
     //"/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_box.txt";
-    "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_chair_subset.txt";
+   // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_chair_subset.txt";
 
     int LINES_test=CountLines(filename_test);
 
@@ -220,11 +328,10 @@ int main( int argc, char** argv )
     float testing_data[row][col-1];
     float testing_lables[row];
     ifstream fin_test(
-            //"/home/laptop2/work_space/intern_ws/o3d/test_ws/test_200_309.txt"
+            "/home/laptop2/work_space/intern_ws/o3d/test_ws/test_200_309.txt"
           //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_box.txt"
 
-            "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_chair_subset.txt"
-
+           // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_chair_subset.txt"
 
     );  //read_the test dataset
     for(int i=0;i<row;i++){

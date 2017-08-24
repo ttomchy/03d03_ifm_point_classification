@@ -140,6 +140,9 @@ void EigenvalueBasedDescriptor( pcl::PointCloud<PclPoint> & segment,float local_
 
 int main (int argc, char** argv) {
 
+
+
+
     pcl::PointCloud<PclPoint>::Ptr origin_cloud (new pcl::PointCloud<PclPoint>);
     pcl::PointCloud< pcl::PointXYZ>::Ptr _cloud (new pcl::PointCloud< pcl::PointXYZ>);
 
