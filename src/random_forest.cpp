@@ -74,8 +74,6 @@ long long int total_lines(const int num_of_files,const string & str1,const strin
 
 
 
-
-
 void read_train_data(int num_of_files, long long int num_total_lines,int col_feature ,
                      vector<vector<float> > &training_array,vector<float> &label_class,
                      const string & str1,const string & str2,
@@ -83,13 +81,11 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
                      vector<vector<float> >&test_array,vector<float> test_lables)
 {
 
+    /*
     char szName[100] = {'\0'};
     long long int start_lines=0;
     long long int LINES[5];
-
-
     int j_num_fea=0;
-
 
     label_class.resize(num_total_lines);
     training_array.resize(num_total_lines);
@@ -99,28 +95,16 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
 
     }
 
-
     while(j_num_fea<num_of_files){
 
         try {
-
-            sprintf(szName,
-                    "%s%d%s",
-                    str1.c_str(),
-                    j_num_fea,
-                    str2.c_str()
-            );
-
-
-
+            sprintf(szName,"%s%d%s", str1.c_str(), j_num_fea, str2.c_str());
         }
         catch (exception e) {
             cerr <<"Error"<<endl;
         }
 
-
         LINES[j_num_fea]=CountLines(szName);
-
 
         ifstream fin(szName); //read the training dataset.
 
@@ -165,36 +149,38 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
     rtree->train(trainingDataMat, CV_ROW_SAMPLE, labelsMat,
                  Mat(), Mat(),  Mat(), Mat(), params_2);
 
+    rtree->save("train_model.xml");
+
+    training_array.clear();
+    training_array.shrink_to_fit();
+
+    label_class.clear();
+    label_class.shrink_to_fit();
+    labelsMat.release();
+    trainingDataMat.release();
+
+    */
 
 
-/*
-
-    CvMat trainingDataCvMat = cvMat( row, col-1, CV_32FC1, data_train.training_data );
-
-   // CvMat trainingDataCvMat=CvMat(data_train.array);
-
-    CvMat responsesCvMat = cvMat( row, 1, CV_32FC1, data_train.lables );
-
-    CvRTParams params= CvRTParams(10,500, 0, false,5, 0, true, 0, 100, 0, CV_TERMCRIT_ITER );
-
-    CvERTrees etrees;
-    etrees.train(&trainingDataCvMat, CV_ROW_SAMPLE, &responsesCvMat,
-                 Mat(), Mat(), Mat(), Mat(),params);
-
-
-    Mat impo= etrees.get_var_importance();
-    // float train_error=etrees.get_train_error();
-    std::cerr<<"The value of the var_importance is :"<<impo<<std::endl;
-    //std::cerr<<"The training error is :"<<etrees.get_train_error()<<std::endl;
-
-*/
-
-    //*******************************testing*******************************************
+    ///*******************************testing*******************************************
   // long long int LINES_test= total_lines(test_files,str1_test.c_str(),str2_test.c_str());
+
+    cerr<<"Now starting load files!!!"<<endl;
+
+
+    CvRTrees* rtree = new CvRTrees;
+
+    rtree->load(" /home/laptop2/work_space/intern_ws/o3d/test_ws/train_model.xml");
+
+    if( rtree->get_tree_count() == 0 )
+    {
+       cerr<<"Could not read the classifier"<<endl;
+
+    }
+
 
     char sme[100] = {'\0'};
     int j_num_test=0;
-
 
     while(j_num_test<test_files){
 
@@ -211,15 +197,8 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
        long long int num_of_test_line =CountLines(sme);
       //  cerr<<"The number of testing data lines is :"<<num_of_test_line<<endl;
 
-
-
 //       // vector<vector<float> >().swap(training_array);
-        training_array.clear();
-        training_array.shrink_to_fit();
 
-        label_class.clear();
-        label_class.shrink_to_fit();
-//
 //        cerr<<"The size of the training_array is:"<<training_array.size()<<endl;
 //        cerr<<"The capacity of the training_array is:"<<training_array.capacity()<<endl;
 
@@ -440,13 +419,10 @@ int main( int argc, char** argv )
 {
 
 
-
-
     int num_of_files=10;
     int num_of_test_files=11;
 
     string s1=
-           // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat_chair";
    "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/training/train_";
     string s2=".txt";
 
@@ -463,103 +439,6 @@ int main( int argc, char** argv )
     read_train_data(num_of_files,num_total_lines,7,training_array,label_class,s1,s2,num_of_test_files,s1_test,s2,test_array,test_lables);
 
 
-
-/*
-    for(int i=0;i<9;i++){
-        for(int j=0;j<7;j++){
-
-          std::cout<<std::fixed<<training_data[i][j]<<" ";
-        }
-        std::cout<<std::endl;
-        std::cout<<lables[i]<<std::endl;
-    }
-
-
-*/
-
-/*
-
-    ifstream fin;
-
-    fin.open (file_open.c_str(), std::fstream::in);
-    if(!fin.is_open())
-        std::cerr<<"Fail to open the file !"<<std::endl;
-        //return ;
-    double s=0;
-    int count=0;
-    int row_l=0;
-    int col_l=0;
-    while(fin>>s){
-
-       // std::cout<<"The value of s is :"<<s<<std::endl;
-        if(count<7){
-
-            training_data[row_l][col_l++]=s;
-
-            count++;
-        } else {
-
-            lables[row_l]=s;
-          // std::cout<<"The value of  lables[row]is :"<< lables[row_l]<<std::endl;
-            row_l++;
-            count=0;
-            col_l=0;
-        }
-    }
-
-*/
-
-/*
-    ifstream fin(
-
-           "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat_chair.txt"
-    );
-
-    float tmp;
-    for(long long int i=0;i<row;i++){
-        for( int j=0;j<col;j++) {
-            if(j<col-1){
-
-                fin>>tmp;
-                training_array[i][j]=tmp;
-               // cerr<<"     the value of the  add_train_data is :"<< tmp<<endl;
-            }else{
-
-                fin >>tmp;
-                label_class[i]=tmp;
-
-            }
-        }
-    }
-    fin.close();
-
- */
-
-
-
-/*
-   freopen(
-
-         //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/train_20_feat.txt",
-           "/home/laptop2/work_space/intern_ws/o3d/test_ws/train_feature.txt",
-
-
-           "r",stdin);
-
-    for(int i=0;i<row;i++){
-        for(int j=0;j<col;j++) {
-            if(j<col-1){
-                scanf("%f",&training_data[i][j]);
-                cerr<<"The value of the training_data is:"<< training_data[i][j]<<endl;
-            }else{
-                scanf("%f", &lables[i]);//The training lables
-                cerr<<"The value of the lable is:"<< lables[i]<<endl;
-            }
-        }
-    }
-
-
-*/
 
     return 0;
 }

@@ -38,7 +38,8 @@ void EigenvalueBasedDescriptor( pcl::PointCloud<PclPoint> & segment,float local_
     pcl::getMinMax3D(segment, minPt, maxPt);
     feature_vec.push_back(maxPt.z-minPt.z);//delta z
 
-    feature_vec.push_back(local_density);//local point density
+    float local_density_tmp=local_density;
+    feature_vec.push_back(local_density_tmp);//local point density
 
 
     int kNPoints=segment.points.size();//get the number of the points
@@ -137,10 +138,7 @@ void EigenvalueBasedDescriptor( pcl::PointCloud<PclPoint> & segment,float local_
 
 }
 
-
 int main (int argc, char** argv) {
-
-
 
 
     pcl::PointCloud<PclPoint>::Ptr origin_cloud (new pcl::PointCloud<PclPoint>);
