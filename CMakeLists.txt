@@ -194,7 +194,7 @@ add_definitions(${PCL_DEFINITIONS})
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 add_definitions(-std=c++11)
-#
+
 #add_executable(example src/example.cpp)
 #target_link_libraries(example ${catkin_LIBRARIES})
 #target_link_libraries(example ${PCL_LIBRARIES})
@@ -203,20 +203,19 @@ add_definitions(-std=c++11)
 
 
 
-
-add_executable( split_stairs src/split_stairs.cpp)
-target_link_libraries(split_stairs  ${catkin_LIBRARIES})
-target_link_libraries(split_stairs  ${PCL_LIBRARIES})
-
-
+#
+#add_executable( split_stairs src/split_stairs.cpp)
+#target_link_libraries(split_stairs  ${catkin_LIBRARIES})
+#target_link_libraries(split_stairs  ${PCL_LIBRARIES})
+#
+#
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-add_executable(opencv_cv src/opencv_cv.cpp)
-
-target_link_libraries( opencv_cv ${PCL_LIBRARIES} )
-target_link_libraries( opencv_cv ${catkin_LIBRARIES} )
-
+#add_executable(opencv_cv src/opencv_cv.cpp)
+#target_link_libraries( opencv_cv ${PCL_LIBRARIES} )
+#target_link_libraries( opencv_cv ${catkin_LIBRARIES} )
+#
 
 add_executable(calculate_feature src/calculate_feature.cpp)
 target_link_libraries(calculate_feature ${PCL_LIBRARIES})
@@ -226,10 +225,22 @@ add_executable( random_forest  src/random_forest.cpp)
 target_link_libraries( random_forest ${OpenCV_LIBS} )
 
 
-#
-#add_executable( remove_ground src/remove_ground.cpp)
-#target_link_libraries(remove_ground  ${catkin_LIBRARIES})
-#target_link_libraries(remove_ground  ${PCL_LIBRARIES})
-#
+add_executable( cal_downsample_size src/cal_downsample_size.cpp)
+target_link_libraries( cal_downsample_size ${PCL_LIBRARIES} )
+target_link_libraries( cal_downsample_size ${catkin_LIBRARIES} )
 
 
+add_executable( remove_ground src/remove_ground.cpp)
+target_link_libraries(remove_ground  ${catkin_LIBRARIES})
+target_link_libraries(remove_ground  ${PCL_LIBRARIES})
+
+
+
+add_executable( key_board_event src/key_board_event.cpp)
+target_link_libraries(key_board_event  ${catkin_LIBRARIES})
+target_link_libraries(key_board_event  ${PCL_LIBRARIES})
+
+
+add_executable(filter_target src/filter_target.cpp)
+target_link_libraries(filter_target  ${catkin_LIBRARIES})
+target_link_libraries(filter_target  ${PCL_LIBRARIES})

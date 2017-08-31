@@ -147,28 +147,18 @@ int main (int argc, char** argv) {
     //Read the point cloud.
     pcl::PCDReader reader;
 
-    int j_num_wall =0;
+    int j_num_wall =1;
     std::string ss1;
 
-    while(j_num_wall<106) {
+    while(j_num_wall<139) {
 
-        char szName[100] = {'\0'};
-//         sprintf(szName,
-//         "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/wall/clouser_wall%d.pcd",
-//         j_num_wall); //格式化输出文件名
-//        sprintf(szName,
-//                "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/not_wall/clouser_not_wall%d.pcd",
-//                j_num_wall); //格式化输出文件名
-//
+        char szName[200] = {'\0'};
+
 
         sprintf(szName,
-        "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/column/wall/wall%d.pcd",
+            "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/diff_scale/diff_scale_chair/7/chair%d.pcd",
                 j_num_wall); //格式化输出文件名
 
-//        sprintf(szName,
-//        "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/box/box/box%d.pcd",
-//
-//               j_num_wall); //格式化输出文件名
 
         reader.read(szName, *_cloud); // Remember to download the file first!
         //reader.read ("testdataset.pcd", *origin_cloud);
@@ -184,7 +174,7 @@ int main (int argc, char** argv) {
             origin_cloud->points[i].x=_cloud->points[i].x;
             origin_cloud->points[i].y=_cloud->points[i].y;
             origin_cloud->points[i].z=_cloud->points[i].z;
-            origin_cloud->points[i].intensity=1100;
+            origin_cloud->points[i].intensity=2400;
             //1100 is the wall
             //1200 is the target
             //1300 is the chair
@@ -194,6 +184,15 @@ int main (int argc, char** argv) {
             //1700 is the flower
             //1800 is the garbage
             //1900 is the column
+
+            //2000 is the diff small bottle
+            //2100 is the diff flower
+            //2200 is the diff garbage
+            //2300 is the diff bottle
+            //2400 is the diff chair
+
+
+
         }
 
         //创建KdTreeFLANN对象，并把创建的点云设置为输入,创建一个searchPoint变量作为查询点
@@ -258,7 +257,8 @@ int main (int argc, char** argv) {
 
             int num_points = segment.points.size();//get the number of the points
             // if the point's neighborhoood points is two low ,we consider it must be a noise point
-            if (num_points <= 2) { ;
+            if (num_points <= 2) {
+                ;
             } else {
                 EigenvalueBasedDescriptor(segment, local_density, searchPoint.intensity);
             }

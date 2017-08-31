@@ -31,8 +31,7 @@ typedef pcl::PointXYZ PointT;
 int j_num_wall = 0;
 int j_num_not_wall = 0;
 
-void
-cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
+void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
 
     // All the objects needed
     pcl::PCDReader reader;
@@ -41,7 +40,6 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     pcl::SACSegmentationFromNormals<PointT, pcl::Normal> seg;
     pcl::PCDWriter writer;
     pcl::ExtractIndices<PointT> extract;
-    //pcl::ExtractIndices<pcl::PointXYZ> extract;
     pcl::ExtractIndices<pcl::Normal> extract_normals;
     pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT> ());
 
@@ -57,7 +55,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     //pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_plane (new pcl::PointCloud<pcl::PointXYZ>);
 
 
-    // Read in the cloud data
+  // Read in the cloud data
   //  reader.read ("o3d03_origin0.pcd", *cloud);
   //  std::vector<int> index;
   //  pcl::removeNaNFromPointCloud(*cloud, *cloud, index);
@@ -74,7 +72,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
     sor.setInputCloud(cloud);
     sor.setMeanK(25);
-    sor.setStddevMulThresh(1.0);
+    sor.setStddevMulThresh(2.0);
     sor.filter(*cloud_filtered);
     std::cout<<"cloud after filtering:"<<std::endl;
    // std::cerr<<*cloud_filtered<<std::endl;
@@ -101,7 +99,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     seg.setNormalDistanceWeight (0.1);
     seg.setMethodType (pcl::SAC_RANSAC);
     seg.setMaxIterations (100);
-    seg.setDistanceThreshold (0.1);
+    seg.setDistanceThreshold (0.05);
     seg.setInputCloud (cloud_filtered);
     seg.setInputNormals (cloud_normals);
     // Obtain the plane inliers and coefficients
@@ -114,10 +112,10 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     extract.setNegative (false);
 
     // Write the planar inliers to disk
-    // pcl::PointCloud<PointT>::Ptr cloud_plane (new pcl::PointCloud<PointT> ());
-    //  extract.filter (*cloud_plane);
-    // std::cerr << "PointCloud representing the planar component: " << cloud_plane->points.size () << " data points." << std::endl;
-    //  writer.write ("table_scene_mug_stereo_textured_plane.pcd", *cloud_plane, false);
+     pcl::PointCloud<PointT>::Ptr cloud_plane (new pcl::PointCloud<PointT> ());
+     extract.filter (*cloud_plane);
+     std::cerr << "PointCloud representing the planar component: " << cloud_plane->points.size () << " data points." << std::endl;
+    // writer.write ("./dataset/training/diff_scale/target/plane.pcd", *cloud_plane, false);
 
 
     // Remove the planar inliers, extract the rest
@@ -147,78 +145,84 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     ec.extract (cluster_indices);
 
 
-    for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it)
-    {
-        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
-        for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit)
-            cloud_cluster->points.push_back (cloud->points[*pit]); //*
+         for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it)
+         {
+             pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
+             for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit)
+                 cloud_cluster->points.push_back (cloud->points[*pit]); //*
 
-        cloud_cluster->width = cloud_cluster->points.size ();
-        cloud_cluster->height = 1;
-        cloud_cluster->is_dense = true;
+             cloud_cluster->width = cloud_cluster->points.size ();
+             cloud_cluster->height = 1;
+             cloud_cluster->is_dense = true;
 
-        std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
-        std::string ss1,ss2;
+             std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
+             std::string ss1,ss2;
 
-        if(( cloud_cluster->points.size ()>420 )&& ( cloud_cluster->points.size ()<480 ) ){
+             //        if( cloud_cluster->points.size ()>1000 ){
+             //
+             //
+             //
+             //                ROS_WARN("Successful writing wall points!");
+             //                ss1="./dataset/training/diff_scale/target/";
+             //
+             //                ss2="column";
+             //
+             //                std::stringstream ss;
+             //                ss <<ss1<<ss2  ;
+             //                ss<<j_num_wall<< ".pcd";
+             //
+             //                writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
+             //                j_num_wall++;
+             //
+             //
+             //        } else{
+             //  ROS_ERROR("Successful writing non_wall points!");
 
-//
-//            double x_axis=0;
-//
-//            for(size_t i=0;i<cloud_cluster->points.size();++i)
-//            {
-//                x_axis+=cloud_cluster->points[i].x;
-//            }
-//
-//            x_axis/=cloud_cluster->points.size();
-//
-//            if((x_axis<3)){
-
-                ROS_WARN("Successful writing wall points!");
-                ss1="./dataset/training/column/column/";
-                ss2="column";
-                // /home/laptop2/work_space/intern_ws/o3d/test_ws
-                std::stringstream ss;
-                ss <<ss1<<ss2  ;
-                ss<<j_num_wall<< ".pcd";
-
-                writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
-                j_num_wall++;
-           // }
+             //  ss1="./dataset/training/diff_scale/diff_scale_chair/test/";
 
 
-        } else{
-          //  ROS_ERROR("Successful writing non_wall points!");
-            ss1="./dataset/training/column/test/";
-            ss2="garbage";
-            // /home/laptop2/work_space/intern_ws/o3d/test_ws
-            std::stringstream ss;
-            ss <<ss1<<ss2  ;
-            ss<<j_num_not_wall<< ".pcd";
 
-//            double x_axis=0;
-//
-//            for(size_t i=0;i<cloud_cluster->points.size();++i)
-//            {
-//                x_axis+=cloud_cluster->points[i].x;
-//            }
-//
-//            x_axis/=cloud_cluster->points.size();
+             // Create the filtering object
+             pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+             sor.setInputCloud (cloud_cluster);
+             sor.setMeanK (25);
+             sor.setStddevMulThresh (1.0);
+             sor.filter (*cloud_cluster);
 
-            //if((x_axis<4)&&(cloud_cluster->points.size()>490)){
-                ROS_ERROR("Successful writing non_wall points!");
+             std::cerr << "Cloud after filtering: " << std::endl;
+             std::cerr << *cloud_cluster << std::endl;
+
+
+
+
+
+
+
+
+             ss1=
+
+           "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/diff_scale/diff_scale_small_bottle/test/"
+
+                     ;
+             ss2="small_bottle";
+             // /home/laptop2/work_space/intern_ws/o3d/test_ws
+             std::stringstream ss;
+             ss <<ss1<<ss2  ;
+             ss<<j_num_not_wall<< ".pcd";
+
+
+             ROS_ERROR("Successful writing non_wall points!");
 
              writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
-                j_num_not_wall++;
+             j_num_not_wall++;
+
+         }
 
 
-        //    }
 
 
 
-        }
 
-    }
 }
 
 

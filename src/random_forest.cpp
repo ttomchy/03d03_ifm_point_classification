@@ -8,9 +8,9 @@
 #include <fstream>
 
 #include "../include/data.h"
+#include "../include/features.h"
 using namespace cv;
 using namespace std;
-
 
 long long int CountLines(char *filename)
 {
@@ -81,7 +81,7 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
                      vector<vector<float> >&test_array,vector<float> test_lables)
 {
 
-    /*
+/*
     char szName[100] = {'\0'};
     long long int start_lines=0;
     long long int LINES[5];
@@ -143,7 +143,7 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
     labelsMat = labelsMat.reshape(1,label_class.size());
 
 
-    CvRTParams params_2= CvRTParams(10,5000, 0, false,5, 0, true, 0, 100, 0, CV_TERMCRIT_ITER );
+    CvRTParams params_2= CvRTParams(10,6500, 0, false,5, 0, true, 0, 100, 0, CV_TERMCRIT_ITER );
 
     CvRTrees* rtree = new CvRTrees;
     rtree->train(trainingDataMat, CV_ROW_SAMPLE, labelsMat,
@@ -159,18 +159,18 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
     labelsMat.release();
     trainingDataMat.release();
 
-    */
+*/
 
 
     ///*******************************testing*******************************************
-  // long long int LINES_test= total_lines(test_files,str1_test.c_str(),str2_test.c_str());
+ //  long long int LINES_test= total_lines(test_files,str1_test.c_str(),str2_test.c_str());
 
     cerr<<"Now starting load files!!!"<<endl;
 
 
     CvRTrees* rtree = new CvRTrees;
 
-    rtree->load(" /home/laptop2/work_space/intern_ws/o3d/test_ws/train_model.xml");
+    rtree->load("/home/laptop2/work_space/intern_ws/o3d/test_ws/train_model.xml");
 
     if( rtree->get_tree_count() == 0 )
     {
@@ -274,6 +274,7 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
         double recall_1400=0;
         double recall_1900=0;
         double recall_1200=0;
+        double recall_2000=0,recall_2100,recall_2200,recall_2300,recall_2400;
         float  lable_temp=test_lables[1];
 
         for (int i=0; i< num_of_test_line; i++)
@@ -316,6 +317,23 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
               else if(r==1200){
                   recall_1200++;
               }
+              else if(r==2000){
+                  recall_2000++;
+              }
+              else if(r==2100){
+                  recall_2100++;
+              }
+              else if(r==2200){
+                  recall_2200++;
+              }
+              else if(r==2300){
+                  recall_2300++;
+              }
+              else if(r==2400){
+                  recall_2400++;
+              }
+
+
       //    }
 
                 r = fabs((float)r - labels_testMat.at<float>(i,0)) <= FLT_EPSILON ? 1 : 0;
@@ -330,7 +348,7 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
             test_hr /= num_of_test_line;
             cerr<<"The accuracy rate is :"<<test_hr<<endl;
             recall_1100/=num_of_test_line;
-            recall_1200/=num_of_test_line;
+
             recall_1300/=num_of_test_line;
             recall_1400/=num_of_test_line;
             recall_1500/=num_of_test_line;
@@ -338,25 +356,47 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
             recall_1700/=num_of_test_line;
             recall_1800/=num_of_test_line;
 
+
+            recall_1200/=num_of_test_line;
+
+            recall_2000/=num_of_test_line;
+            recall_2100/=num_of_test_line;
+            recall_2200/=num_of_test_line;
+            recall_2300/=num_of_test_line;
+            recall_2400/=num_of_test_line;
+
             cerr<<"The misclass of the wall is :"<<recall_1100<<endl;
+
             cerr<<"The misclass of the target is :"<<recall_1200<<endl;
-            cerr<<"The misclass of the chair is :"<<recall_1300<<endl;
             cerr<<"The misclass of the people is :"<<recall_1400<<endl;
+
+/*
+            cerr<<"The misclass of the chair is :"<<recall_1300<<endl;
+
             cerr<<"The misclass of the bottle is :"<<recall_1500<<endl;
             cerr<<"The misclass of the box   is :"<<recall_1600<<endl;
             cerr<<"The misclass of the flower is :"<<recall_1700<<endl;
             cerr<<"The misclass of the garbage is :"<<recall_1800<<endl;
             cerr<<"The misclass of the column is :"<<recall_1900<<endl;
+*/
+
+            cerr<<"The misclass of the diff small bottle:"<<recall_2000<<endl;
+            cerr<<"The misclass of the diff flower :"<<recall_2100<<endl;
+            cerr<<"The misclass of the diff garbage :"<<recall_2200<<endl;
+            cerr<<"The misclass of  the diff bottle is :"<<recall_2300<<endl;
+            cerr<<"The misclass of the diff chair is :"<<recall_2400<<endl;
 
 
 
-     //   }
+
+
+        //   }
      //   else{
 
          //   test_hr /= num_of_test_line;
          //   cerr<<"The accuracy rate is :"<<test_hr<<endl;
           //  recall/= num_of_test_line;
-            cerr<<"The number of the recall is :"<<recall<<endl;
+            cerr<<"The number of the recall points is :"<<recall<<endl;
 
        // }
 
@@ -373,6 +413,7 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
             case 1200:
                cerr<<"1200 is the target"<<endl;
                 break;
+
             case 1300:
                 cerr<<"1300 is the chair "<<endl;
                 break;
@@ -394,6 +435,29 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
             case 1900:
                 cerr<<"1900 is the column "<<endl;
                 break;
+
+
+            case 2000:
+                cerr<<"2000 is the diff small bottle"<<endl;
+                break;
+
+            case 2100:
+                cerr<<"2100 is the diff flower"<<endl;
+                break;
+
+            case 2200:
+                cerr<<"2200 is the diff garbage"<<endl;
+                break;
+
+            case 2300:
+                cerr<<"2300 is the diff bottle"<<endl;
+                break;
+
+            case 2400:
+                cerr<<"2400 is the diff chair"<<endl;
+                break;
+
+
 
             default:
                 cerr<<"Wrong lable!!!"<<endl;
@@ -419,11 +483,12 @@ int main( int argc, char** argv )
 {
 
 
-    int num_of_files=10;
-    int num_of_test_files=11;
+    int num_of_files=7;
+    int num_of_test_files=8;
 
     string s1=
-   "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/training/train_";
+   //"/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/training/train_";
+    "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/scale/train/feature_diff_";
     string s2=".txt";
 
     long long int num_total_lines=total_lines(num_of_files,s1,s2);
@@ -434,8 +499,10 @@ int main( int argc, char** argv )
     std::string s1_test=
             //"/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/feature_box";
            //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/test_200_309";
-   "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test/test";
+ //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test/test";
+  //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/diff_scale/feature_diff_scale_target";
      //  /home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test/test
+   "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/scale/test/feature_diff_test";
     read_train_data(num_of_files,num_total_lines,7,training_array,label_class,s1,s2,num_of_test_files,s1_test,s2,test_array,test_lables);
 
 
