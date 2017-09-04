@@ -116,12 +116,7 @@ catkin_package(
 include_directories(
         ${catkin_INCLUDE_DIRS}
 )
-
-find_package(PCL 1.2 REQUIRED)
-
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LINRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
+#SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -pthread")
 
 
 ## Declare a C++ library
@@ -193,6 +188,7 @@ add_definitions(${PCL_DEFINITIONS})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
 add_definitions(-std=c++11)
 
 #add_executable(example src/example.cpp)
@@ -209,8 +205,41 @@ add_definitions(-std=c++11)
 #target_link_libraries(split_stairs  ${PCL_LIBRARIES})
 #
 #
+
+
+
+
+find_package(PCL 1.8 REQUIRED)
+
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+#message(${PCL_INCLUDE_DIRS})
+#message(${PCL_LIBRARY_DIRS})
+
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
+
+
+#
+#
+#include(CheckCXXCompilerFlag)
+#CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+#CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+#if(COMPILER_SUPPORTS_CXX11)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#elseif(COMPILER_SUPPORTS_CXX0X)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+#else()
+#    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+#endif()
+#
+#if(COMMAND cmake_policy)
+#    cmake_policy(SET CMP0003 NEW)
+#endif(COMMAND cmake_policy)
+
+
+
 
 #add_executable(opencv_cv src/opencv_cv.cpp)
 #target_link_libraries( opencv_cv ${PCL_LIBRARIES} )
@@ -244,3 +273,15 @@ target_link_libraries(key_board_event  ${PCL_LIBRARIES})
 add_executable(filter_target src/filter_target.cpp)
 target_link_libraries(filter_target  ${catkin_LIBRARIES})
 target_link_libraries(filter_target  ${PCL_LIBRARIES})
+
+
+#
+#add_executable(multi_thread src/multi_thread.cpp)
+#target_link_libraries(multi_thread  ${catkin_LIBRARIES})
+#
+#target_link_libraries(multi_thread  ${PCL_LIBRARIES})
+
+
+add_executable(test_remove_ground src/test_remove_ground.cpp)
+target_link_libraries(test_remove_ground  ${PCL_LIBRARIES})
+target_link_libraries(test_remove_ground  ${catkin_LIBRARIES})

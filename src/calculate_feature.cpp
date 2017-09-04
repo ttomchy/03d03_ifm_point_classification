@@ -1,6 +1,9 @@
 //
 // Created by laptop2 on 8/21/17.
 //
+
+
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -138,6 +141,15 @@ void EigenvalueBasedDescriptor( pcl::PointCloud<PclPoint> & segment,float local_
 
 }
 
+
+
+
+
+
+
+
+
+
 int main (int argc, char** argv) {
 
 
@@ -190,9 +202,6 @@ int main (int argc, char** argv) {
             //2200 is the diff garbage
             //2300 is the diff bottle
             //2400 is the diff chair
-
-
-
         }
 
         //创建KdTreeFLANN对象，并把创建的点云设置为输入,创建一个searchPoint变量作为查询点
@@ -263,6 +272,13 @@ int main (int argc, char** argv) {
                 EigenvalueBasedDescriptor(segment, local_density, searchPoint.intensity);
             }
         }
+
+
+
+
+
+
+
 
         j_num_wall++;
 
