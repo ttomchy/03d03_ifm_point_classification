@@ -100,6 +100,9 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
 
     std::cerr << "PointCloud has: " << cloud->points.size () << " data points." << std::endl;
 
+
+
+
     //create the filtering object
     pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
     sor.setInputCloud(cloud);
@@ -107,6 +110,10 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     sor.setStddevMulThresh(2.0);
     sor.filter(*cloud_filtered);
     std::cout<<"cloud after filtering:"<<std::endl;
+
+
+
+
     // std::cerr<<*cloud_filtered<<std::endl;
 
     //  writer.write<pcl::PointXYZ>("split_map3d_inliers.pcd",*cloud_filtered,false);
@@ -162,8 +169,38 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
    // *cloud=*non_cloud_plane;
     std::cerr << "  the number of the  ground point is : " << non_cloud_plane->points.size () << " data points." << std::endl;
 
+
+    *cloud_filtered=*non_cloud_plane;
+
+    writer.write<pcl::PointXYZ> ("origin.pcd", *cloud_filtered,false);
+
+
+    std::cerr << "PointCloud before filtering: " << cloud_filtered->width * cloud_filtered->height
+              << " data points (" << pcl::getFieldsList (*cloud_filtered) << ")."<<endl;
+
+    // Create the filtering object
+    pcl::VoxelGrid<pcl::PointXYZ> sor2;
+    sor2.setInputCloud (cloud_filtered);
+    sor2.setLeafSize (0.03f, 0.03f, 0.03f);
+    sor2.filter (*cloud_filtered);
+
+    std::cerr << "PointCloud after filtering: " << cloud_filtered->width * cloud_filtered->height
+              << " data points (" << pcl::getFieldsList (*cloud_filtered) << ")."<<endl;
+
+    writer.write<pcl::PointXYZ> ("dst.pcd", *cloud_filtered,false);
+
+
+
+
+
+
+
+
+
+
+
     std::unique_lock<std::mutex> lck(m_mux);
-    cloud_vector.push_back(*non_cloud_plane);
+    cloud_vector.push_back(*cloud_filtered);
     lck.unlock();
 
     ROS_WARN("PRODUCE ONE PRODUCT");
@@ -327,7 +364,7 @@ void consume_thread(){
             origin_cloud->points[i].x=test_tmp.points[i].x;
             origin_cloud->points[i].y=test_tmp.points[i].y;
             origin_cloud->points[i].z=test_tmp.points[i].z;
-            origin_cloud->points[i].intensity=2400;
+            origin_cloud->points[i].intensity=1200;
 //
 //            1100 is the wall
 //            1200 is the target
@@ -468,9 +505,6 @@ main (int argc, char** argv)
 
     ros::MultiThreadedSpinner spinner(2);  // extra thread so we can receive cloud messages while in the service call
     spinner.spin();
-
-
-   // ros::spin ();
 
     thread.join();
     std::cout<<"Now it runs after the thread.join function !"<<std::endl;

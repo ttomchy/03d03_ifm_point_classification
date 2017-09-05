@@ -239,8 +239,6 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 #endif(COMMAND cmake_policy)
 
 
-
-
 #add_executable(opencv_cv src/opencv_cv.cpp)
 #target_link_libraries( opencv_cv ${PCL_LIBRARIES} )
 #target_link_libraries( opencv_cv ${catkin_LIBRARIES} )
@@ -285,3 +283,7 @@ target_link_libraries(filter_target  ${PCL_LIBRARIES})
 add_executable(test_remove_ground src/test_remove_ground.cpp)
 target_link_libraries(test_remove_ground  ${PCL_LIBRARIES})
 target_link_libraries(test_remove_ground  ${catkin_LIBRARIES})
+
+add_executable(down_sample src/down_sample.cpp)
+target_link_libraries(down_sample  ${PCL_LIBRARIES})
+target_link_libraries(down_sample  ${catkin_LIBRARIES})

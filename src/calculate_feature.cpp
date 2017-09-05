@@ -12,6 +12,7 @@
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/common/common.h>
 #include <pcl/io/pcd_io.h>
+#include <pcl/filters/voxel_grid.h>
 
 #include "../include/features.h"
 
@@ -30,7 +31,32 @@ bool swap_if_gt(T& a, T& b) {
 
 using namespace std;
 
-void EigenvalueBasedDescriptor( pcl::PointCloud<PclPoint> & segment,float local_density, float lable){
+vector<int> num_key_point;
+
+long long int CountLines(char *filename)
+{
+    ifstream ReadFile;
+    long long int n=0;
+    string tmp;
+    ReadFile.open(filename,ios::in);//ios::in 表示以只读的方式读取文件
+    if(ReadFile.fail())//文件打开失败:返回0
+    {
+        return 0;
+    }
+    else//文件存在
+    {
+        while(getline(ReadFile,tmp,'\n'))
+        {
+            n++;
+        }
+        ReadFile.close();
+        //   sleep(5);
+        return n;
+    }
+}
+
+
+void EigenvalueBasedDescriptor(pcl::PointCloud<PclPoint> & segment,float local_density, float lable, int num_line){
 
 
     vector<double> feature_vec;
@@ -41,7 +67,7 @@ void EigenvalueBasedDescriptor( pcl::PointCloud<PclPoint> & segment,float local_
     pcl::getMinMax3D(segment, minPt, maxPt);
     feature_vec.push_back(maxPt.z-minPt.z);//delta z
 
-    float local_density_tmp=local_density;
+    double local_density_tmp=local_density;
     feature_vec.push_back(local_density_tmp);//local point density
 
 
@@ -131,18 +157,54 @@ void EigenvalueBasedDescriptor( pcl::PointCloud<PclPoint> & segment,float local_
 
     Feature eigenvalue_feature;
 
-    vector<double>::iterator t;
-    for (t = feature_vec.begin(); t != feature_vec.end(); t++) {
+//    vector<double>::iterator t;
+//    for (t = feature_vec.begin(); t != feature_vec.end(); t++) {
+//
+//        std::cout <<std::fixed<< *t << " ";
+//
+//    }
+//    std::cout<<int (lable)<<std::endl;
+//
+//
 
-        std::cout <<std::fixed<< *t << " ";
+    char name_[200]="/home/laptop2/work_space/intern_ws/o3d/test_ws/keyperpoint.txt";
+    int line_number=CountLines(name_);
+
+
+    num_key_point.resize(line_number);
+    ifstream fin("/home/laptop2/work_space/intern_ws/o3d/test_ws/keyperpoint.txt"); //read the training dataset.
+
+    for(int i =0;i<line_number ;i++){
+        for(int j=0;j<1;j++) {
+
+                fin>>num_key_point[i];
+
+        }
+    }
+
+    fin.close();
+
+
+    for(int i=0;i<= num_key_point[num_line];i++){
+
+        vector<double>::iterator t;
+        for (t = feature_vec.begin(); t != feature_vec.end(); t++) {
+            std::cout <<std::fixed<< *t << " ";
+        }
+        std::cout<<int (lable)<<std::endl;
 
     }
-    std::cout<<int (lable)<<std::endl;
+
+//
+//int total=0;
+//    vector<int>::iterator t;
+//    for (t = num_key_point.begin(); t != num_key_point.end(); t++) {
+//        total+= *t ;
+//    }
+//
+//  cout<<"the number of total points is :"  <<total+line_number<<endl;
 
 }
-
-
-
 
 
 
@@ -159,16 +221,16 @@ int main (int argc, char** argv) {
     //Read the point cloud.
     pcl::PCDReader reader;
 
-    int j_num_wall =1;
+    int j_num_wall =0;
     std::string ss1;
 
-    while(j_num_wall<139) {
+    while(j_num_wall<248) {
 
         char szName[200] = {'\0'};
 
 
         sprintf(szName,
-            "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/diff_scale/diff_scale_chair/7/chair%d.pcd",
+                "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/diff_scale/fianal_target/target_final/1/target%d.pcd",
                 j_num_wall); //格式化输出文件名
 
 
@@ -176,6 +238,21 @@ int main (int argc, char** argv) {
         //reader.read ("testdataset.pcd", *origin_cloud);
         std::cerr << "PointCloud before filtering: " << _cloud->width * _cloud->height
                   << " data points (" << pcl::getFieldsList(*_cloud) << ")." << std::endl;
+
+
+
+
+        // Create the filtering object
+        pcl::VoxelGrid<pcl::PointXYZ> sor;
+        sor.setInputCloud (_cloud);
+        sor.setLeafSize (0.03f, 0.03f, 0.03f);
+        sor.filter (*_cloud);
+
+        std::cerr << "PointCloud after filtering: " << _cloud->width * _cloud->height
+                  << " data points (" << pcl::getFieldsList (*_cloud) << ")."<<endl;
+
+
+
 
         std::cerr << "The number of the  j_num_wall is :" <<j_num_wall<< std::endl;
 
@@ -186,7 +263,7 @@ int main (int argc, char** argv) {
             origin_cloud->points[i].x=_cloud->points[i].x;
             origin_cloud->points[i].y=_cloud->points[i].y;
             origin_cloud->points[i].z=_cloud->points[i].z;
-            origin_cloud->points[i].intensity=2400;
+            origin_cloud->points[i].intensity=1200;
             //1100 is the wall
             //1200 is the target
             //1300 is the chair
@@ -209,7 +286,7 @@ int main (int argc, char** argv) {
         //设置搜索空间
         kdtree.setInputCloud(origin_cloud);
         //设置查询点并赋随机值
-
+        int less_point=0;
         //For every point we try to find its neighbor points.
         for (size_t i = 0; i < origin_cloud->points.size(); ++i) {
             PclPoint searchPoint;
@@ -265,19 +342,19 @@ int main (int argc, char** argv) {
             }
 
             int num_points = segment.points.size();//get the number of the points
+          //  cout<<"the value of the num_points is :"<<num_points<<endl;
             // if the point's neighborhoood points is two low ,we consider it must be a noise point
             if (num_points <= 2) {
-                ;
+
+              less_point++  ;
             } else {
-                EigenvalueBasedDescriptor(segment, local_density, searchPoint.intensity);
+                ;
+                EigenvalueBasedDescriptor( segment, local_density, searchPoint.intensity,i);
             }
+
         }
-
-
-
-
-
-
+     //   cout<<"the value of the less points is :"<<less_point<<endl;
+        less_point=0;
 
 
         j_num_wall++;
