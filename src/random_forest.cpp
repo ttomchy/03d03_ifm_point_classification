@@ -81,7 +81,7 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
                      vector<vector<float> >&test_array,vector<float> test_lables)
 {
 
-/*
+
     char szName[100] = {'\0'};
     long long int start_lines=0;
     long long int LINES[5];
@@ -113,11 +113,9 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
                 if(j<7){
 
                     fin>>training_array[i][j];
-
                 }else{
 
                     fin>>label_class[i];
-
                 }
             }
         }
@@ -159,24 +157,24 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
     labelsMat.release();
     trainingDataMat.release();
 
-*/
+
 
 
     ///*******************************testing*******************************************
  //  long long int LINES_test= total_lines(test_files,str1_test.c_str(),str2_test.c_str());
-
-    cerr<<"Now starting load files!!!"<<endl;
-
-
-    CvRTrees* rtree = new CvRTrees;
-
-    rtree->load("/home/laptop2/work_space/intern_ws/o3d/test_ws/train_model.xml");
-
-    if( rtree->get_tree_count() == 0 )
-    {
-       cerr<<"Could not read the classifier"<<endl;
-
-    }
+//
+//    cerr<<"Now starting load files!!!"<<endl;
+//
+//
+//    CvRTrees* rtree = new CvRTrees;
+//
+//    rtree->load("/home/laptop2/work_space/intern_ws/o3d/test_ws/train_model.xml");
+//
+//    if( rtree->get_tree_count() == 0 )
+//    {
+//       cerr<<"Could not read the classifier"<<endl;
+//
+//    }
 
 
     char sme[100] = {'\0'};
@@ -396,7 +394,7 @@ void read_train_data(int num_of_files, long long int num_total_lines,int col_fea
          //   test_hr /= num_of_test_line;
          //   cerr<<"The accuracy rate is :"<<test_hr<<endl;
           //  recall/= num_of_test_line;
-            cerr<<"The number of the recall points is :"<<recall<<endl;
+            cerr<<"The number of the recall points is :"<<recall/num_of_test_line<<endl;
 
        // }
 
@@ -482,13 +480,13 @@ vector<float> test_lables;
 int main( int argc, char** argv )
 {
 
-
     int num_of_files=7;
     int num_of_test_files=8;
 
     string s1=
    //"/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/training/train_";
     "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/scale/train/feature_diff_";
+ // "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/scale/0_06/train/feature_d_";
     string s2=".txt";
 
     long long int num_total_lines=total_lines(num_of_files,s1,s2);
@@ -503,6 +501,7 @@ int main( int argc, char** argv )
   //  "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/diff_scale/feature_diff_scale_target";
      //  /home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/test/test
    "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/scale/test/feature_diff_test";
+      //      "/home/laptop2/work_space/intern_ws/o3d/test_ws/txt_dataset/scale/0_06/test/feature_d_t_";
     read_train_data(num_of_files,num_total_lines,7,training_array,label_class,s1,s2,num_of_test_files,s1_test,s2,test_array,test_lables);
 
 

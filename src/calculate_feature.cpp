@@ -224,13 +224,15 @@ int main (int argc, char** argv) {
     int j_num_wall =0;
     std::string ss1;
 
-    while(j_num_wall<248) {
+    while(j_num_wall<139) {
 
         char szName[200] = {'\0'};
 
 
         sprintf(szName,
-                "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/diff_scale/fianal_target/target_final/1/target%d.pcd",
+
+            //   "/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/diff_scale/fianal_target/target_all/target%d.pcd",
+"/home/laptop2/work_space/intern_ws/o3d/test_ws/dataset/training/diff_scale/diff_scale_chair/7/chair%d.pcd",
                 j_num_wall); //格式化输出文件名
 
 
@@ -238,9 +240,6 @@ int main (int argc, char** argv) {
         //reader.read ("testdataset.pcd", *origin_cloud);
         std::cerr << "PointCloud before filtering: " << _cloud->width * _cloud->height
                   << " data points (" << pcl::getFieldsList(*_cloud) << ")." << std::endl;
-
-
-
 
         // Create the filtering object
         pcl::VoxelGrid<pcl::PointXYZ> sor;
@@ -251,9 +250,6 @@ int main (int argc, char** argv) {
         std::cerr << "PointCloud after filtering: " << _cloud->width * _cloud->height
                   << " data points (" << pcl::getFieldsList (*_cloud) << ")."<<endl;
 
-
-
-
         std::cerr << "The number of the  j_num_wall is :" <<j_num_wall<< std::endl;
 
         origin_cloud->points.resize (_cloud->width * _cloud->height);
@@ -263,7 +259,7 @@ int main (int argc, char** argv) {
             origin_cloud->points[i].x=_cloud->points[i].x;
             origin_cloud->points[i].y=_cloud->points[i].y;
             origin_cloud->points[i].z=_cloud->points[i].z;
-            origin_cloud->points[i].intensity=1200;
+            origin_cloud->points[i].intensity=2400;
             //1100 is the wall
             //1200 is the target
             //1300 is the chair
@@ -342,7 +338,7 @@ int main (int argc, char** argv) {
             }
 
             int num_points = segment.points.size();//get the number of the points
-          //  cout<<"the value of the num_points is :"<<num_points<<endl;
+         //   cerr<<"the value of the num_points is :"<<num_points<<endl;
             // if the point's neighborhoood points is two low ,we consider it must be a noise point
             if (num_points <= 2) {
 
@@ -351,9 +347,8 @@ int main (int argc, char** argv) {
                 ;
                 EigenvalueBasedDescriptor( segment, local_density, searchPoint.intensity,i);
             }
-
         }
-     //   cout<<"the value of the less points is :"<<less_point<<endl;
+        cerr<<"the value of the less points is :"<<less_point<<endl;
         less_point=0;
 
 

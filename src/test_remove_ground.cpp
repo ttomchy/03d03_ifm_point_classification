@@ -101,8 +101,6 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     std::cerr << "PointCloud has: " << cloud->points.size () << " data points." << std::endl;
 
 
-
-
     //create the filtering object
     pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
     sor.setInputCloud(cloud);
@@ -110,8 +108,6 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
     sor.setStddevMulThresh(2.0);
     sor.filter(*cloud_filtered);
     std::cout<<"cloud after filtering:"<<std::endl;
-
-
 
 
     // std::cerr<<*cloud_filtered<<std::endl;
@@ -191,14 +187,6 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input) {
 
 
 
-
-
-
-
-
-
-
-
     std::unique_lock<std::mutex> lck(m_mux);
     cloud_vector.push_back(*cloud_filtered);
     lck.unlock();
@@ -224,7 +212,7 @@ void EigenvalueBasedDescriptor( pcl::PointCloud<PclPoint> & segment,float local_
     pcl::getMinMax3D(segment, minPt, maxPt);
     feature_vec.push_back(maxPt.z-minPt.z);//delta z
 
-    float local_density_tmp=local_density;
+    double local_density_tmp=local_density;
     feature_vec.push_back(local_density_tmp);//local point density
 
 
@@ -325,6 +313,12 @@ void EigenvalueBasedDescriptor( pcl::PointCloud<PclPoint> & segment,float local_
 
 
 }
+
+
+
+
+
+
 
 
 void consume_thread(){
@@ -475,9 +469,6 @@ void consume_thread(){
 
     }
 }
-
-
-
 
 
 

@@ -244,6 +244,9 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 #target_link_libraries( opencv_cv ${catkin_LIBRARIES} )
 #
 
+add_executable(search_all_file src/search_all_file.cpp)
+
+
 add_executable(calculate_feature src/calculate_feature.cpp)
 target_link_libraries(calculate_feature ${PCL_LIBRARIES})
 
